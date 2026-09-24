@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>harrischen — frontend engineer @ tencent</title>
+<meta name="description" content="12 年腾讯前端开发经验，富融银行核心业务线前端 Owner。前端架构 + AI 工程化：Vue3 / Weex / Flutter / Node.js / TypeScript，MCP Server 与多 Agent 编排。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230d1117'/%3E%3Ctext x='16' y='22' font-size='18' font-family='monospace' fill='%233ddc84' text-anchor='middle'%3E%24%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --mono: "JetBrains Mono", "SF Mono", SFMono-Regular, ui-monospace, "Cascadia Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --maxw: 1160px;
+  /* 交通灯三色，两种主题共用 */
+  --red:#ff5f56;
+  --yellow:#ffbd2e;
+  --green:#27c93f;
+}
+html[data-theme="dark"]{
+  --bg:#08090c;
+  --bg-soft:#0d1017;
+  --panel:#0f131a;
+  --line:#1e2530;
+  --line-soft:#161b23;
+  --fg:#c9d1d9;
+  --fg-dim:#7d8896;
+  --fg-faint:#4d5663;
+  --accent:#3ddc84;
+  --accent-rgb:61,220,132;
+  --accent-2:#64b5ff;
+  --accent-3:#ffb86c;
+  --glow:rgba(61,220,132,.14);
+  --grid:rgba(125,136,150,.07);
+}
+html[data-theme="light"]{
+  --bg:#fbfbf9;
+  --bg-soft:#f3f4f1;
+  --panel:#ffffff;
+  --line:#e2e4de;
+  --line-soft:#eceff0;
+  --fg:#1f2328;
+  --fg-dim:#5c6570;
+  --fg-faint:#98a1ac;
+  --accent:#0a7f4a;
+  --accent-rgb:10,127,74;
+  --accent-2:#0b62c4;
+  --accent-3:#a9641a;
+  --glow:rgba(10,127,74,.10);
+  --grid:rgba(31,35,40,.06);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--fg);
+  font-family:var(--mono);
+  font-size:14px;
+  line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+/* 背景：网格 + 顶部光晕 */
+body::before{
+  content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:32px 32px;
+  mask-image:radial-gradient(ellipse 90% 60% at 50% 0%,#000 20%,transparent 75%);
+}
+body::after{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(ellipse 60% 40% at 50% -10%,var(--glow),transparent 70%);
+}
+::selection{background:var(--accent);color:#08090c}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+
+/* ---------- nav ---------- */
+nav{
+  position:sticky;top:0;z-index:20;
+  backdrop-filter:blur(10px);
+  background:color-mix(in srgb,var(--bg) 82%,transparent);
+  border-bottom:1px solid var(--line-soft);
+}
+.nav-in{display:flex;align-items:center;gap:18px;height:52px}
+.brand{font-weight:700;letter-spacing:.5px}
+.brand span{color:var(--accent)}
+.nav-links{display:flex;gap:16px;margin-left:auto;flex-wrap:wrap}
+.nav-links a{color:var(--fg-dim);font-size:12.5px;transition:color .15s}
+.nav-links a:hover{color:var(--accent)}
+#theme{
+  background:transparent;border:1px solid var(--line);color:var(--fg-dim);
+  font-family:var(--mono);font-size:12px;padding:4px 9px;border-radius:5px;cursor:pointer;
+}
+#theme:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ---------- hero ---------- */
+header{padding:64px 0 40px}
+.term{
+  border:1px solid var(--line);border-radius:10px;overflow:hidden;
+  background:var(--panel);box-shadow:0 20px 60px -30px rgba(0,0,0,.8);
+}
+.term-bar{
+  display:flex;align-items:center;gap:8px;padding:10px 14px;
+  border-bottom:1px solid var(--line-soft);background:var(--bg-soft);
+}
+.dot{width:11px;height:11px;border-radius:50%}
+.dot.r{background:var(--red)}.dot.y{background:var(--yellow)}.dot.g{background:var(--green)}
+.term-title{margin-left:8px;font-size:12px;color:var(--fg-faint)}
+.term-body{padding:20px 22px 24px;font-size:13.5px;min-height:190px}
+.term-body .ln{white-space:pre-wrap;word-break:break-word}
+.c-dim{color:var(--fg-faint)}
+.c-acc{color:var(--accent)}
+.c-2{color:var(--accent-2)}
+.c-3{color:var(--accent-3)}
+.prompt{color:var(--accent)}
+.cursor{display:inline-block;width:8px;height:15px;background:var(--accent);vertical-align:-2px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+
+.ident{display:flex;flex-wrap:wrap;align-items:baseline;gap:14px;margin-top:26px}
+h1{margin:0;font-size:clamp(28px,5.4vw,44px);letter-spacing:-.5px;line-height:1.15}
+h1 .accent{color:var(--accent)}
+.role{color:var(--fg-dim);font-size:14px}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.badge{
+  border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-size:12px;color:var(--fg-dim);
+  background:var(--bg-soft);
+}
+.badge b{color:var(--fg);font-weight:600}
+/* focus bar：一句话定位 */
+.focus{
+  margin-top:20px;padding:12px 16px;border:1px solid var(--line);border-left:2px solid var(--accent);
+  border-radius:0 8px 8px 0;background:var(--panel);font-size:13.5px;color:var(--fg-dim);
+}
+.focus b{color:var(--accent);font-weight:600;margin-right:8px}
+
+/* ---------- sections ---------- */
+section{padding:44px 0;border-top:1px solid var(--line-soft)}
+.sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:26px;flex-wrap:wrap}
+.sec-cmd{color:var(--accent);font-size:13px}
+.sec-title{font-size:12px;color:var(--fg-faint);letter-spacing:2px;text-transform:uppercase}
+
+/* timeline */
+.tl{list-style:none;margin:0;padding:0;position:relative}
+.tl::before{content:"";position:absolute;left:132px;top:6px;bottom:6px;width:1px;background:var(--line)}
+.tl li{position:relative;display:flex;gap:20px;padding:12px 0}
+.tl .year{
+  width:104px;text-align:right;color:var(--fg-faint);font-size:12.5px;flex:none;padding-top:2px;
+}
+.tl .node{
+  position:relative;flex:none;width:16px;display:flex;justify-content:center;
+}
+.tl .node::before{
+  content:"";width:9px;height:9px;border-radius:50%;background:var(--bg);
+  border:2px solid var(--fg-faint);margin-top:8px;z-index:1;
+}
+/* 当前节点：由圆点自身向外扩散的脉冲（box-shadow 与圆点同心，不存在对齐误差） */
+.tl li.now .node::before{
+  border-color:var(--accent);background:var(--accent);
+  animation:pulse 2.4s cubic-bezier(.2,.6,.3,1) infinite;
+}
+@keyframes pulse{
+  0%   {box-shadow:0 0 0 0 rgba(var(--accent-rgb),.45)}
+  70%  {box-shadow:0 0 0 11px rgba(var(--accent-rgb),0)}
+  100% {box-shadow:0 0 0 0 rgba(var(--accent-rgb),0)}
+}
+.tl .body{flex:1;min-width:0}
+.tl .body h3{margin:0;font-size:15px;font-weight:600}
+.tl .body p{margin:4px 0 0;color:var(--fg-dim);font-size:13px}
+.tl .tag{color:var(--accent-3);font-size:11.5px;border:1px solid var(--line);border-radius:4px;padding:1px 6px;margin-left:8px}
+
+/* cards */
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.card{
+  border:1px solid var(--line);border-radius:9px;padding:16px 18px;background:var(--panel);
+  transition:border-color .15s,transform .15s;
+}
+.card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.card h4{margin:0 0 8px;font-size:13px;letter-spacing:1px;color:var(--fg-faint);text-transform:uppercase;font-weight:600}
+.card p{margin:0;font-size:13px;color:var(--fg-dim)}
+.card .big{font-size:22px;color:var(--accent);font-weight:700;letter-spacing:-.5px}
+
+/* skill list: 终端 ls 风格 */
+.skills{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.skill{border:1px solid var(--line);border-radius:9px;background:var(--panel);overflow:hidden}
+.skill-hd{
+  padding:9px 14px;border-bottom:1px solid var(--line-soft);background:var(--bg-soft);
+  font-size:12px;color:var(--fg-faint);
+}
+.skill-hd b{color:var(--accent);font-weight:600}
+.skill-bd{padding:12px 14px;display:flex;flex-wrap:wrap;gap:7px}
+.chip{
+  font-size:12px;padding:3px 9px;border-radius:5px;border:1px solid var(--line);
+  color:var(--fg-dim);background:var(--bg-soft);
+}
+.chip:hover{color:var(--accent);border-color:var(--accent)}
+
+/* code block */
+pre.code{
+  margin:0;border:1px solid var(--line);border-radius:9px;background:var(--panel);
+  padding:16px 18px;overflow-x:auto;font-size:13px;line-height:1.7;
+}
+pre.code .k{color:var(--accent-2)}
+pre.code .s{color:var(--accent-3)}
+pre.code .c{color:var(--fg-faint)}
+pre.code .f{color:var(--accent)}
+
+footer{padding:48px 0 64px;border-top:1px solid var(--line-soft);color:var(--fg-faint);font-size:12.5px}
+.foot-in{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;align-items:center}
+footer a{color:var(--fg-dim)}
+footer a:hover{color:var(--accent)}
+
+@media (max-width:960px){
+  .skills{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:720px){
+  .g2,.g3{grid-template-columns:1fr}
+  .skills{grid-template-columns:1fr}
+  .tl::before{left:8px}
+  .tl li{flex-direction:column;gap:4px;padding-left:28px}
+  .tl .year{text-align:left;width:auto}
+  .tl .node{position:absolute;left:0;top:14px;width:auto}
+  .nav-links{gap:12px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-in">
+    <a class="brand" href="#top"><span>$</span> harrischen</a>
+    <div class="nav-links">
+      <a href="#timeline">timeline</a>
+      <a href="#now">now</a>
+      <a href="#stack">stack</a>
+      <a href="#contact">contact</a>
+      <button id="theme" type="button" aria-label="toggle theme">[ dim ]</button>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap" id="top">
+
+  <header>
+    <div class="term">
+      <div class="term-bar">
+        <i class="dot r"></i><i class="dot y"></i><i class="dot g"></i>
+        <span class="term-title">harrischen — zsh — 80×24</span>
+      </div>
+      <div class="term-body" id="boot"></div>
+    </div>
+
+    <!-- TODO: 中文名按需替换 -->
+    <div class="ident">
+      <h1>HARRIS<span class="accent">.</span></h1>
+      <span class="role">前端工程师 · AI 工程化 / 腾讯科技</span>
+    </div>
+
+    <div class="badges">
+      <span class="badge"><b>12y</b> 腾讯前端</span>
+      <span class="badge"><b>7y+</b> 金融科技</span>
+      <span class="badge">富融银行 <b>前端 Owner</b></span>
+      <span class="badge">零售 + 对公 <b>双业务线</b></span>
+      <span class="badge"><b>MCP Server</b> + Agent 独立开发</span>
+    </div>
+
+    <div class="focus">
+      <b>focus</b>前端架构 + AI 工程化：把内部系统的日志、文档和研发流程，做成 Agent 能直接调用的能力。
+    </div>
+
+  </header>
+
+  <section id="timeline">
+    <div class="sec-head">
+      <span class="sec-cmd">$ git log --reverse --oneline</span>
+      <span class="sec-title">timeline</span>
+    </div>
+    <ul class="tl">
+      <li>
+        <div class="year">2012 — 2013</div>
+        <div class="node"></div>
+        <div class="body">
+          <h3>美肤汇科技有限公司 <span class="tag">美妆美啦</span></h3>
+          <p>前端开发，负责电商网站与活动运营页面的开发。</p>
+        </div>
+      </li>
+      <li class="now">
+        <div class="year">2013 — now</div>
+        <div class="node"></div>
+        <div class="body">
+          <h3>腾讯科技</h3>
+          <p>前端开发，参与技术方案设计与技术决策。前几年做互联网彩票、竞猜业务，近 7 年做银行业务，现在负责富融银行核心业务线的前端。2025 年起开始做 AI 工程化，独立开发 MCP Server 与需求评审 Agent。</p>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <section id="now">
+    <div class="sec-head">
+      <span class="sec-cmd">$ cat ./current.md</span>
+      <span class="sec-title">what i'm doing</span>
+    </div>
+    <div class="grid g3">
+      <div class="card">
+        <h4>role</h4>
+        <p>富融银行（香港持牌虚拟银行）核心业务线 <b>前端 Owner</b>。</p>
+      </div>
+      <div class="card">
+        <h4>scope</h4>
+        <p>独立负责零售银行与对公银行双业务线核心模块的前端技术方案设计与技术决策。</p>
+      </div>
+      <div class="card">
+        <h4>domain</h4>
+        <p>转账汇款、外汇、定存、对公网银等交易链路。</p>
+      </div>
+      <div class="card">
+        <h4>stack</h4>
+        <p>Weex / Vue3 / Flutter / Node.js / TypeScript，跨端 + 全栈。</p>
+      </div>
+      <div class="card">
+        <h4>years</h4>
+        <p class="big">12<span style="font-size:13px;color:var(--fg-dim)">y @ tencent</span></p>
+      </div>
+      <div class="card">
+        <h4>fintech</h4>
+        <p class="big">7<span style="font-size:13px;color:var(--fg-dim)">y+ in banking</span></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="stack">
+    <div class="sec-head">
+      <span class="sec-cmd">$ ls -R ./skills</span>
+      <span class="sec-title">core stack</span>
+    </div>
+    <div class="skills">
+      <div class="skill">
+        <div class="skill-hd"><b>frontend</b> / 前端</div>
+        <div class="skill-bd">
+          <span class="chip">Vue.js 2 / 3</span>
+          <span class="chip">Weex (App 内嵌)</span>
+          <span class="chip">Flutter</span>
+          <span class="chip">TypeScript</span>
+          <span class="chip">JavaScript</span>
+          <span class="chip">H5</span>
+        </div>
+      </div>
+      <div class="skill">
+        <div class="skill-hd"><b>server</b> / 服务端</div>
+        <div class="skill-bd">
+          <span class="chip">Node.js (Egg.js)</span>
+          <span class="chip">Express</span>
+        </div>
+      </div>
+      <div class="skill">
+        <div class="skill-hd"><b>devops</b> / 工程效能</div>
+        <div class="skill-bd">
+          <span class="chip">Turborepo</span>
+          <span class="chip">CI / CD</span>
+          <span class="chip">Docker</span>
+          <span class="chip">Webpack</span>
+          <span class="chip">Vite</span>
+          <span class="chip">单元测试</span>
+        </div>
+      </div>
+      <div class="skill">
+        <div class="skill-hd"><b>ai</b> / AI 工程化 · 2025 —</div>
+        <div class="skill-bd">
+          <span class="chip">MCP 协议（Tools / Resources）</span>
+          <span class="chip">MCP Server 设计</span>
+          <span class="chip">CodeBuddy Agent SDK</span>
+          <span class="chip">多 Agent 编排</span>
+          <span class="chip">渐进式上下文加载</span>
+          <span class="chip">Node.js 直连 MCP 取数</span>
+          <span class="chip">取数 / 分析分离</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="sec-head">
+      <span class="sec-cmd">$ ./contact --open</span>
+      <span class="sec-title">say hello</span>
+    </div>
+    <div class="grid g2">
+      <a class="card" href="https://github.com/harrischen" target="_blank" rel="noopener">
+        <h4>github</h4>
+        <p style="color:var(--accent)">github.com/harrischen ↗</p>
+      </a>
+      <div class="card">
+        <h4>currently</h4>
+        <p>Shenzhen / Hong Kong · 腾讯科技 · 富融银行</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="foot-in">
+      <div>© <span id="yr"></span> harrischen · built with one html file, zero deps</div>
+      <div><a href="#top">↑ back to top</a></div>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---- theme ---- */
+  var root = document.documentElement, btn = document.getElementById('theme');
+  var saved = null;
+  try { saved = localStorage.getItem('theme'); } catch(e){}
+  if (saved) root.setAttribute('data-theme', saved);
+  else if (window.matchMedia('(prefers-color-scheme: light)').matches) root.setAttribute('data-theme','light');
+  function syncBtn(){
+    var dark = root.getAttribute('data-theme') === 'dark';
+    btn.textContent = dark ? '[ dim ]' : '[ lum ]';
+  }
+  syncBtn();
+  btn.addEventListener('click', function(){
+    var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch(e){}
+    syncBtn();
+  });
+
+  /* ---- boot typewriter ---- */
+  var lines = [
+    '<span class="prompt">➜</span> <span class="c-dim">~</span> ssh harrischen@blog',
+    '<span class="c-dim">Connection established. loading profile.json …</span>',
+    '',
+    '<span class="prompt">➜</span> <span class="c-dim">~</span> cat about.md',
+    '<span class="c-acc">name</span>     : Harris Chen',
+    '<span class="c-acc">role</span>     : Frontend Engineer',
+    '<span class="c-acc">company</span>  : 腾讯科技 <span class="c-dim">(2013 — now)</span>',
+    '<span class="c-acc">focus</span>    : 富融银行 <span class="c-dim">/</span> 金融科技 <span class="c-dim">/</span> AI 工程化',
+    '<span class="c-acc">stack</span>    : Vue3 <span class="c-dim">·</span> Weex <span class="c-dim">·</span> Flutter <span class="c-dim">·</span> Node.js <span class="c-dim">·</span> TypeScript',
+    '<span class="c-acc">github</span>   : <span class="c-2">github.com/harrischen</span>',
+    '',
+    '<span class="prompt">➜</span> <span class="c-dim">~</span> '
+  ];
+
+  var box = document.getElementById('boot');
+  document.getElementById('yr').textContent = new Date().getFullYear();
+
+  function renderAll(){
+    box.innerHTML = lines.map(function(l){ return '<div class="ln">' + (l || '&nbsp;') + '</div>'; }).join('');
+  }
+
+  if (reduce) { renderAll(); return; }
+
+  var li = 0, ci = 0, buf = '';
+  var speed = 14;
+
+  // 逐字符打字：只处理纯文本，HTML 标签整段跳过
+  function step(){
+    if (li >= lines.length) return;
+    var raw = lines[li];
+    if (ci === 0) { box.innerHTML += '<div class="ln" id="l'+li+'"></div>'; }
+    var el = document.getElementById('l'+li);
+
+    if (!raw.length) {                 // 空行：占位后直接换行
+      el.innerHTML = '&nbsp;';
+      li++; ci = 0; buf = '';
+      setTimeout(step, 140);
+      return;
+    }
+
+    if (raw[ci] === '<') {
+      var end = raw.indexOf('>', ci);
+      buf += raw.slice(ci, end + 1);
+      ci = end + 1;
+    } else {
+      buf += raw[ci++];
+    }
+    el.innerHTML = buf + '<span class="cursor"></span>';
+
+    if (ci >= raw.length) {
+      el.innerHTML = buf;
+      li++; ci = 0; buf = '';
+      setTimeout(step, 140);
+    } else {
+      setTimeout(step, speed);
+    }
+  }
+  step();
+})();
+</script>
+</body>
+</html>
